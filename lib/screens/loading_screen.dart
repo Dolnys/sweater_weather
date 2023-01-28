@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:dio/dio.dart';
 import 'package:sweater_weather/services/lcoation.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:sweater_weather/services/networking.dart';
+
+const apiKey = 'e230b33051ba43309f7150708232801';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -9,30 +14,23 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  double? latitude;
+  double? longitude;
   @override
   void initState() {
-    getLocation();
-    getData();
+    getLocationData();
+
     super.initState();
   }
 
-  void getLocation() async {
+  void getLocationData() async {
     Location location = Location();
     await location.getCurrentLocation();
-  }
-
-  void getData() async {
-    Response response;
-    var dio = Dio();
-
-    response = await dio.get(
-      'http://api.weatherapi.com/v1/current.json?key=e230b33051ba43309f7150708232801&q=London&aqi=no',
-    );
-    if (response.statusCode == 200) {
-      print(response.data);
-    } else {
-      print(response.statusCode);
-    }
+    latitude = location.latitute;
+    longitude = location.longitude;
+    NetworkHelper networkHelper = NetworkHelper(
+        'http://api.weatherapi.com/v1/current.json?key=$apiKey&q=$latitude,$longitude&aqi=no');
+    var weatherData = await networkHelper.getData();
   }
 
   @override
