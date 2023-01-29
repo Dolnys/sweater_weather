@@ -11,9 +11,11 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  WeatherModel weather = WeatherModel();
   late double temperature;
   String? condition;
   String? cityName;
+  String? weatherMessage;
 
   @override
   void initState() {
@@ -22,9 +24,19 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   void uptadeUI(dynamic weatherData) {
-    temperature = weatherData['current']['temp_c'];
-    condition = weatherData['current']['condition']['text'];
-    cityName = weatherData['location']['name'];
+    setState(() {
+      if (weatherData == null) {
+        temperature = 0;
+        cityName = 'error';
+        condition = 'error';
+        weatherMessage = 'Unable to get weather data';
+        return;
+      }
+      temperature = weatherData['current']['temp_c'];
+      condition = weatherData['current']['condition']['text'];
+      cityName = weatherData['location']['name'];
+      weatherMessage = WeatherModel().getMessage(temperature);
+    });
   }
 
   @override
@@ -49,7 +61,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weather.getLocationWeather();
+                      uptadeUI(weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
@@ -85,10 +100,12 @@ class _LocationScreenState extends State<LocationScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
-                child: Text(
-                  WeatherModel().getMessage(temperature) + 'in $cityName',
-                  textAlign: TextAlign.center,
-                  style: kMessageTextStyle,
+                child: Expanded(
+                  child: Text(
+                    '$weatherMessage in $cityName',
+                    textAlign: TextAlign.center,
+                    style: kMessageTextStyle,
+                  ),
                 ),
               ),
             ],

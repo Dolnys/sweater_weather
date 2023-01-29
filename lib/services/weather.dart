@@ -1,4 +1,19 @@
+import 'package:sweater_weather/services/location.dart';
+import 'package:sweater_weather/services/networking.dart';
+
+const apiKey = 'e230b33051ba43309f7150708232801';
+
 class WeatherModel {
+  Future<dynamic> getLocationWeather() async {
+    Location location = Location();
+    await location.getCurrentLocation();
+
+    NetworkHelper networkHelper = NetworkHelper(
+        'http://api.weatherapi.com/v1/current.json?key=$apiKey&q=${location.latitute},${location.longitude}&aqi=no');
+    var weatherData = await networkHelper.getData();
+    return weatherData;
+  }
+
   String getWeatherIcon(int condition) {
     if (condition < 300) {
       return '🌩';
