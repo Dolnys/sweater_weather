@@ -4,6 +4,14 @@ import 'package:sweater_weather/services/networking.dart';
 const apiKey = 'e230b33051ba43309f7150708232801';
 
 class WeatherModel {
+  Future<dynamic> getCityWeather(String cityName) async {
+    var url =
+        'http://api.weatherapi.com/v1/current.json?key=$apiKey&q=$cityName&aqi=no';
+    NetworkHelper networkHelper = NetworkHelper(url);
+    var weatherData = await networkHelper.getData();
+    return weatherData;
+  }
+
   Future<dynamic> getLocationWeather() async {
     Location location = Location();
     await location.getCurrentLocation();

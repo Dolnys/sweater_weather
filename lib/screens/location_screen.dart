@@ -72,8 +72,8 @@ class _LocationScreenState extends State<LocationScreen> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      var typedName = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
@@ -81,6 +81,11 @@ class _LocationScreenState extends State<LocationScreen> {
                           },
                         ),
                       );
+                      if (typedName != null) {
+                        var weatherData =
+                            await weather.getCityWeather(typedName);
+                        uptadeUI(weatherData);
+                      }
                     },
                     child: const Icon(
                       Icons.location_city,
@@ -91,31 +96,27 @@ class _LocationScreenState extends State<LocationScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
+                child: Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      Text(
                         '$temperature°',
                         style: kTempTextStyle,
                       ),
-                    ),
-                    Expanded(
-                      child: Text(
+                      Text(
                         '$condition',
                         style: kConditionTextStyle,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15.0),
-                child: Expanded(
-                  child: Text(
-                    '$weatherMessage in $cityName',
-                    textAlign: TextAlign.center,
-                    style: kMessageTextStyle,
-                  ),
+                child: Text(
+                  '$weatherMessage in $cityName',
+                  textAlign: TextAlign.center,
+                  style: kMessageTextStyle,
                 ),
               ),
             ],
