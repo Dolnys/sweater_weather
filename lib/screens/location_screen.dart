@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:sweater_weather/services/weather.dart';
 import 'package:sweater_weather/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
+  LocationScreen({this.locationWeather});
+  final locationWeather;
+
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  late double temperature;
+  String? condition;
+  String? cityName;
+
+  @override
+  void initState() {
+    super.initState();
+    uptadeUI(widget.locationWeather);
+  }
+
+  void uptadeUI(dynamic weatherData) {
+    temperature = weatherData['current']['temp_c'];
+    condition = weatherData['current']['condition']['text'];
+    cityName = weatherData['location']['name'];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,13 +68,17 @@ class _LocationScreenState extends State<LocationScreen> {
                 padding: EdgeInsets.only(left: 15.0),
                 child: Row(
                   children: <Widget>[
-                    Text(
-                      '32°',
-                      style: kTempTextStyle,
+                    Expanded(
+                      child: Text(
+                        '$temperature°',
+                        style: kTempTextStyle,
+                      ),
                     ),
-                    Text(
-                      '☀️',
-                      style: kConditionTextStyle,
+                    Expanded(
+                      child: Text(
+                        '$condition',
+                        style: kConditionTextStyle,
+                      ),
                     ),
                   ],
                 ),
@@ -62,8 +86,8 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "It's 🍦 time in San Francisco!",
-                  textAlign: TextAlign.right,
+                  WeatherModel().getMessage(temperature) + 'in $cityName',
+                  textAlign: TextAlign.center,
                   style: kMessageTextStyle,
                 ),
               ),

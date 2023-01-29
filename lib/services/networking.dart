@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 class NetworkHelper {
   NetworkHelper(this.url);
   final String url;
-  Future<void> getData() async {
+  Future getData() async {
     final response = await http.get(
       Uri.parse(url),
     );
